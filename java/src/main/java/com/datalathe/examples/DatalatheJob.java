@@ -1,4 +1,4 @@
-package com.datalathe.enzy;
+package com.datalathe.examples;
 
 import com.datalathe.client.DatalatheClient;
 import com.datalathe.client.command.impl.CreateChipCommand;
