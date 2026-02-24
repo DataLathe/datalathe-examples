@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.datalathe</groupId>
             <artifactId>datalathe-client</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.5</version>
         </dependency>
 
         <!-- Jackson for JSON processing -->
