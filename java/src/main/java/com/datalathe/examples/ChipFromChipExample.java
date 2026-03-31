@@ -2,7 +2,7 @@ package com.datalathe.examples;
 
 import com.datalathe.client.DatalatheClient;
 import com.datalathe.client.GenerateReportResult;
-import com.datalathe.client.command.impl.GenerateReportCommand;
+import com.datalathe.client.types.GenerateReportResponse;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -56,7 +56,7 @@ public class ChipFromChipExample {
         GenerateReportResult report = client.generateReport(
                 Collections.singletonList(filteredChipId), queries, null, null);
 
-        GenerateReportCommand.Response.Result result = report.getResults().get(0);
+        GenerateReportResponse.Result result = report.getResults().get(0);
         if (result.getError() != null) {
             System.out.println("Error: " + result.getError());
         } else {

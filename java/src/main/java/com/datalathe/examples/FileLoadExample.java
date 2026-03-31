@@ -2,7 +2,7 @@ package com.datalathe.examples;
 
 import com.datalathe.client.DatalatheClient;
 import com.datalathe.client.GenerateReportResult;
-import com.datalathe.client.command.impl.GenerateReportCommand;
+import com.datalathe.client.types.GenerateReportResponse;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -21,8 +21,9 @@ import java.util.List;
  * Example: load a CSV file into Datalathe and query it back.
  *
  * Usage:
- *   mvn compile exec:java -Dexec.mainClass="com.datalathe.examples.FileLoadExample" \
- *       -Durl=http://localhost:3000 -DfilePath=./testdata/employees.csv
+ * mvn compile exec:java
+ * -Dexec.mainClass="com.datalathe.examples.FileLoadExample" \
+ * -Durl=http://localhost:3000 -DfilePath=./testdata/employees.csv
  */
 public class FileLoadExample {
     private static final Logger logger = LogManager.getLogger(FileLoadExample.class);
@@ -70,7 +71,7 @@ public class FileLoadExample {
             System.out.println("\n--- Query " + i + " ---");
             System.out.println("SQL: " + queries.get(i));
 
-            GenerateReportCommand.Response.Result result = report.getResults().get(i);
+            GenerateReportResponse.Result result = report.getResults().get(i);
             if (result == null) {
                 System.out.println("  (no result)");
                 continue;
@@ -86,7 +87,8 @@ public class FileLoadExample {
             // Print header
             StringBuilder header = new StringBuilder();
             for (int c = 1; c <= meta.getColumnCount(); c++) {
-                if (c > 1) header.append(" | ");
+                if (c > 1)
+                    header.append(" | ");
                 header.append(meta.getColumnName(c));
             }
             System.out.println(header);
@@ -96,7 +98,8 @@ public class FileLoadExample {
             while (rs.next()) {
                 StringBuilder row = new StringBuilder();
                 for (int c = 1; c <= meta.getColumnCount(); c++) {
-                    if (c > 1) row.append(" | ");
+                    if (c > 1)
+                        row.append(" | ");
                     row.append(rs.getString(c));
                 }
                 System.out.println(row);

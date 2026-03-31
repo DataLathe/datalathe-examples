@@ -2,7 +2,7 @@ package com.datalathe.examples;
 
 import com.datalathe.client.DatalatheClient;
 import com.datalathe.client.GenerateReportResult;
-import com.datalathe.client.command.impl.GenerateReportCommand;
+import com.datalathe.client.types.GenerateReportResponse;
 import com.datalathe.client.resolver.ChipFactory;
 import com.datalathe.client.resolver.ChipResolver;
 import com.datalathe.client.resolver.ResolvedChips;
@@ -150,7 +150,7 @@ public class ChipResolverExample {
             System.out.println("\n--- Query " + i + " ---");
             System.out.println("SQL: " + queries.get(i));
 
-            GenerateReportCommand.Response.Result result = report.getResults().get(i);
+            GenerateReportResponse.Result result = report.getResults().get(i);
             if (result == null) {
                 System.out.println("  (no result)");
                 continue;

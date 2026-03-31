@@ -20,14 +20,16 @@ import java.util.Map;
 /**
  * Example: use AI Query to ask natural language questions about your data.
  *
- * This example loads a CSV file, creates an AI context with column descriptions,
+ * This example loads a CSV file, creates an AI context with column
+ * descriptions,
  * then asks questions in plain English instead of writing SQL.
  *
  * Usage:
- *   mvn compile exec:java -Dexec.mainClass="com.datalathe.examples.AiQueryExample" \
- *       -Durl=http://localhost:3000 \
- *       -DfilePath=./testdata/employees.csv \
- *       -DapiKey=YOUR_ANTHROPIC_API_KEY
+ * mvn compile exec:java
+ * -Dexec.mainClass="com.datalathe.examples.AiQueryExample" \
+ * -Durl=http://localhost:3000 \
+ * -DfilePath=./testdata/employees.csv \
+ * -DapiKey=YOUR_ANTHROPIC_API_KEY
  */
 public class AiQueryExample {
     private static final Logger logger = LogManager.getLogger(AiQueryExample.class);
@@ -56,7 +58,8 @@ public class AiQueryExample {
                 "example-key", "anthropic", apiKey, null);
         logger.info("Credential created: {}", credential.getCredentialId());
 
-        // 3. Create an AI context with column descriptions so the model understands the data
+        // 3. Create an AI context with column descriptions so the model understands the
+        // data
         Map<String, Map<String, String>> columnDescriptions = Map.of(
                 "employees", Map.of(
                         "name", "Employee full name",
@@ -132,7 +135,8 @@ public class AiQueryExample {
             // Header
             StringBuilder header = new StringBuilder();
             for (int i = 0; i < columns.size(); i++) {
-                if (i > 0) header.append(" | ");
+                if (i > 0)
+                    header.append(" | ");
                 header.append(columns.get(i).getName());
             }
             System.out.println(header);

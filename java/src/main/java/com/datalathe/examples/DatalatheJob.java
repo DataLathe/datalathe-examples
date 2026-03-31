@@ -1,9 +1,8 @@
 package com.datalathe.examples;
 
 import com.datalathe.client.DatalatheClient;
-import com.datalathe.client.command.impl.CreateChipCommand;
-import com.datalathe.client.command.impl.GenerateReportCommand;
-import com.datalathe.Util;
+import com.datalathe.client.types.ChipSource;
+import com.datalathe.client.types.GenerateReportResponse;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -11,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +35,7 @@ public class DatalatheJob {
 
         logger.info("Staging data");
 
-        List<CreateChipCommand.Request.Source> createChipRequests = getCreateChipRequests();
+        List<ChipSource> createChipRequests = getCreateChipRequests();
         List<String> chipIds = client.createChips(createChipRequests);
 
         logger.info("Staged data");
@@ -51,29 +52,50 @@ public class DatalatheJob {
         logger.info("Executing queries");
 
         // Execute queries and print results
-        Map<Integer, GenerateReportCommand.Response.Result> results = client.generateReport(chipIds, analysisQueries);
+        Map<Integer, GenerateReportResponse.Result> results = client.generateReport(chipIds, analysisQueries);
 
         logger.info("Printing results");
-        Util.printReportResults(results);
+        for (Map.Entry<Integer, GenerateReportResponse.Result> entry : results.entrySet()) {
+            System.out.println("\n--- Query " + entry.getKey() + " ---");
+            GenerateReportResponse.Result result = entry.getValue();
+            if (result.getError() != null) {
+                System.out.println("Error: " + result.getError());
+                continue;
+            }
+            ResultSet rs = result.getResultSet();
+            ResultSetMetaData meta = rs.getMetaData();
+            for (int c = 1; c <= meta.getColumnCount(); c++) {
+                if (c > 1) System.out.print(" | ");
+                System.out.print(meta.getColumnName(c));
+            }
+            System.out.println();
+            while (rs.next()) {
+                for (int c = 1; c <= meta.getColumnCount(); c++) {
+                    if (c > 1) System.out.print(" | ");
+                    System.out.print(rs.getString(c));
+                }
+                System.out.println();
+            }
+        }
     }
 
-    private static List<CreateChipCommand.Request.Source> getCreateChipRequests() {
+    private static List<ChipSource> getCreateChipRequests() {
         return Arrays.asList(
-                new CreateChipCommand.Request.Source("local", "object028",
+                new ChipSource("local", "object028",
                         "SELECT * FROM object028 where companyid = 172"),
-                new CreateChipCommand.Request.Source("local", "object028_date000",
+                new ChipSource("local", "object028_date000",
                         "SELECT * FROM object028_date000 where companyid = 172"),
-                new CreateChipCommand.Request.Source("local", "object028_text009",
+                new ChipSource("local", "object028_text009",
                         "SELECT * FROM object028_text009 where companyid = 172"),
-                new CreateChipCommand.Request.Source("local", "object028_text010",
+                new ChipSource("local", "object028_text010",
                         "SELECT * FROM object028_text010 where companyid = 172"),
-                new CreateChipCommand.Request.Source("local", "object028_text011",
+                new ChipSource("local", "object028_text011",
                         "SELECT * FROM object028_text011 where companyid = 172"),
-                new CreateChipCommand.Request.Source("local", "object028_text013",
+                new ChipSource("local", "object028_text013",
                         "SELECT * FROM object028_text013 where companyid = 172"),
-                new CreateChipCommand.Request.Source("local", "object028_text014",
+                new ChipSource("local", "object028_text014",
                         "SELECT * FROM object028_text014 where companyid = 172"),
-                new CreateChipCommand.Request.Source("local", "object028_text015",
+                new ChipSource("local", "object028_text015",
                         "SELECT * FROM object028_text015 where companyid = 172"));
     }
 
