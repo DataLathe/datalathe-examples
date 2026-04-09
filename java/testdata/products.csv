@@ -1,0 +1,4 @@
+product_id,product_name,category,cost,list_price
+P10,Widget Pro,Hardware,45.00,120.00
+P20,DataSync License,Software,100.00,450.00
+P30,Enterprise Platform,Software,800.00,2500.00
