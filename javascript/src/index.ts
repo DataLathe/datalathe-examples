@@ -9,14 +9,14 @@ async function main() {
   console.log("Staging data...");
 
   const sources: SourceRequest[] = [
-    { database_name: "local", table_name: "object028", query: "SELECT * FROM object028 WHERE companyid = 172" },
-    { database_name: "local", table_name: "object028_date000", query: "SELECT * FROM object028_date000 WHERE companyid = 172" },
-    { database_name: "local", table_name: "object028_text009", query: "SELECT * FROM object028_text009 WHERE companyid = 172" },
-    { database_name: "local", table_name: "object028_text010", query: "SELECT * FROM object028_text010 WHERE companyid = 172" },
-    { database_name: "local", table_name: "object028_text011", query: "SELECT * FROM object028_text011 WHERE companyid = 172" },
-    { database_name: "local", table_name: "object028_text013", query: "SELECT * FROM object028_text013 WHERE companyid = 172" },
-    { database_name: "local", table_name: "object028_text014", query: "SELECT * FROM object028_text014 WHERE companyid = 172" },
-    { database_name: "local", table_name: "object028_text015", query: "SELECT * FROM object028_text015 WHERE companyid = 172" },
+    { databaseName: "local", tableName: "object028", query: "SELECT * FROM object028 WHERE companyid = 172" },
+    { databaseName: "local", tableName: "object028_date000", query: "SELECT * FROM object028_date000 WHERE companyid = 172" },
+    { databaseName: "local", tableName: "object028_text009", query: "SELECT * FROM object028_text009 WHERE companyid = 172" },
+    { databaseName: "local", tableName: "object028_text010", query: "SELECT * FROM object028_text010 WHERE companyid = 172" },
+    { databaseName: "local", tableName: "object028_text011", query: "SELECT * FROM object028_text011 WHERE companyid = 172" },
+    { databaseName: "local", tableName: "object028_text013", query: "SELECT * FROM object028_text013 WHERE companyid = 172" },
+    { databaseName: "local", tableName: "object028_text014", query: "SELECT * FROM object028_text014 WHERE companyid = 172" },
+    { databaseName: "local", tableName: "object028_text015", query: "SELECT * FROM object028_text015 WHERE companyid = 172" },
   ];
 
   const chipIds = await client.createChips(sources);
@@ -32,10 +32,10 @@ async function main() {
     "SELECT COUNT(*) FROM object028_date000",
   ];
 
-  const results = await client.generateReport(chipIds, queries);
+  const report = await client.generateReport(chipIds, queries);
 
   // Print results
-  for (const [idx, entry] of results) {
+  for (const [idx, entry] of report.results) {
     console.log(`\n--- Query ${idx} ---`);
     console.log(`SQL: ${queries[idx]}`);
 
@@ -46,7 +46,7 @@ async function main() {
 
     const data = entry.result ?? entry.data;
     if (entry.schema) {
-      console.log(`Columns: ${entry.schema.map((s) => s.name ?? s.column_name).join(", ")}`);
+      console.log(`Columns: ${entry.schema.map((s) => s.name).join(", ")}`);
     }
     if (data) {
       console.log(`Rows: ${data.length}`);
@@ -65,7 +65,7 @@ async function main() {
   const databases = await client.getDatabases();
   for (const db of databases) {
     if (!db.internal) {
-      console.log(`  ${db.database_name} (${db.type})`);
+      console.log(`  ${db.databaseName} (${db.type})`);
     }
   }
 }
