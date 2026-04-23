@@ -1,0 +1,104 @@
+Example output from running MultiTableAiExample with three CSV files
+(customers, orders, products) and a relationship prompt that tells the
+LLM how the tables join together.
+
+Run command:
+  mvn exec:java \
+    -Dexec.mainClass=com.datalathe.examples.MultiTableAiExample \
+    -DapiKey=$DATALATHE_AI_KEY
+
+Engine: localhost:3000
+Provider: anthropic
+Run took ~21s end-to-end (4 AI calls + chip create/delete).
+
+
+=== Q1 ===
+Q: What is the total revenue by region?
+
+SQL: SELECT c.region, SUM(o.quantity * o.unit_price) as total_revenue
+     FROM orders o JOIN customers c ON o.customer_id = c.customer_id
+     WHERE o.status = 'completed'
+     GROUP BY c.region ORDER BY total_revenue DESC
+
+Explanation: Total revenue from completed orders grouped by sales
+             region, ranked from highest to lowest.
+
+region  | total_revenue
+East    | 10520
+Central | 6100
+West    | 3900
+(3 rows) · Viz: bar_chart — Total Revenue by Region · 645 in / 165 out
+
+
+=== Q2 ===
+Q: Show me revenue and profit by product name.
+
+SQL: SELECT p.product_name,
+            SUM(o.quantity * o.unit_price)             as revenue,
+            SUM(o.quantity * (o.unit_price - p.cost))  as profit
+     FROM orders o JOIN products p ON o.product_id = p.product_id
+     WHERE o.status = 'completed'
+     GROUP BY p.product_name ORDER BY revenue DESC
+
+Explanation: Total revenue and profit for each product from completed
+             orders, ordered by revenue from highest to lowest.
+
+product_name        | revenue | profit
+Enterprise Platform | 7500    | 5100
+Widget Pro          | 6720    | 4200
+DataSync License    | 6300    | 4900
+(3 rows) · Viz: bar_chart — Revenue and Profit by Product · 679 in / 191 out
+
+
+=== Q3 ===
+Q: Who are the top 3 customers by revenue? Show their name, region,
+   total revenue, and how many distinct products they ordered.
+
+SQL: SELECT c.name, c.region,
+            SUM(o.quantity * o.unit_price) as total_revenue,
+            COUNT(DISTINCT o.product_id)    as distinct_products
+     FROM orders o JOIN customers c ON o.customer_id = c.customer_id
+     WHERE o.status = 'completed'
+     GROUP BY c.customer_id, c.name, c.region
+     ORDER BY total_revenue DESC LIMIT 3
+
+Explanation: Top 3 customers ranked by total revenue from completed
+             orders, including their region and the number of distinct
+             products they purchased.
+
+name             | region  | total_revenue | distinct_products
+Stark Industries | East    | 7250          | 2
+Initech          | Central | 4300          | 2
+Acme Corp        | West    | 3900          | 2
+(3 rows) · Viz: table — Top 3 Customers by Revenue · 735 in / 216 out
+
+
+=== Q4 (follow-up — model resolves "top customer" from prior turn) ===
+Q: For the top customer, break down their orders by product with
+   quantity and total spent.
+
+SQL: SELECT p.product_name,
+            SUM(o.quantity)                 as quantity,
+            SUM(o.quantity * o.unit_price)  as total_spent
+     FROM orders o JOIN products p ON o.product_id = p.product_id
+     WHERE o.status = 'completed'
+       AND o.customer_id = (
+           SELECT c.customer_id FROM customers c
+           JOIN orders o2 ON c.customer_id = o2.customer_id
+           WHERE o2.status = 'completed'
+           GROUP BY c.customer_id
+           ORDER BY SUM(o2.quantity * o2.unit_price) DESC LIMIT 1)
+     GROUP BY p.product_name ORDER BY total_spent DESC
+
+Explanation: Product breakdown for the highest revenue customer,
+             showing quantity ordered and total amount spent per
+             product.
+
+product_name        | quantity | total_spent
+Enterprise Platform | 2        | 5000
+DataSync License    | 5        | 2250
+(2 rows) · Viz: table — Top Customer's Orders by Product · 786 in / 269 out
+
+
+Conversation turns: 8 (4 user + 4 assistant)
+Total tokens: ~2,845 in / 841 out
