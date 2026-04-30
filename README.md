@@ -14,9 +14,9 @@ mvn clean install
 mvn exec:java -Dexec.mainClass="com.datalathe.examples.DatalatheJob" -Durl=http://localhost:3000
 ```
 
-#### AI Agent example
+#### AI Agent — single analytical question
 
-`AiAgentExample` calls the agent endpoint, which lets the model peek at the data with read-only tools (`list_tables`, `sample_rows`, `column_stats`, etc.) before answering. Use this for open-ended questions where text-to-SQL alone won't cut it.
+`AiAgentExample` calls the agent endpoint, which lets the model peek at the data with read-only tools (`list_tables`, `sample_rows`, `column_stats`, etc.) before answering. Reuses the customers/orders/products fixtures.
 
 ```bash
 cd java
@@ -36,6 +36,19 @@ mvn compile exec:java \
   -DapiKey=$BEDROCK_API_KEY
 ```
 
+#### AI Agent — open-ended fraud audit
+
+`AiAgentFraudExample` is the heavier sibling: a payments dataset under `testdata/fraud/` with several deliberately-seeded anomaly patterns (velocity attack, geo-mismatch, shared device fingerprint, large outlier, bad merchant) and an open-ended audit question. The agent has to discover the schema, identify the anomalies, and rank suspects on its own — typically 8–12 iterations and 30–50 tool calls.
+
+```bash
+cd java
+mvn compile exec:java \
+  -Dexec.mainClass="com.datalathe.examples.AiAgentFraudExample" \
+  -DapiKey=$DATALATHE_AI_KEY
+```
+
+Heads-up: this example burns ~80–100k input tokens. On Tier-1 Anthropic accounts Sonnet may hit a per-minute rate limit; pass `-Dmodel=claude-haiku-4-5-20251001` to switch to Haiku (cheaper, higher rate limit, still finds all the patterns).
+
 ### JavaScript / TypeScript
 
 Uses the `@datalathe/client` npm package to stage data, run queries, and inspect available databases.
@@ -47,7 +60,7 @@ npm run build
 DATALATHE_URL=http://localhost:3000/lathe npm run run
 ```
 
-#### AI Agent example
+#### AI Agent — single analytical question
 
 ```bash
 cd javascript
@@ -56,6 +69,15 @@ DATALATHE_AI_KEY=sk-... npx ts-node src/agent-example.ts
 ```
 
 For bedrock, set `DATALATHE_AI_PROVIDER=bedrock`, `DATALATHE_AI_REGION=us-west-2`, and `DATALATHE_AI_MODEL=anthropic.claude-sonnet-4-5-20250929-v1:0`. The example reuses the CSV fixtures under `java/testdata/`; override with `DATA_DIR` if needed.
+
+#### AI Agent — open-ended fraud audit
+
+```bash
+cd javascript
+DATALATHE_AI_KEY=sk-... npx ts-node src/agent-fraud-example.ts
+```
+
+If Sonnet rate-limits, set `DATALATHE_AI_MODEL=claude-haiku-4-5-20251001`.
 
 ## Database Setup
 

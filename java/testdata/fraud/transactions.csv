@@ -1,0 +1,79 @@
+txn_id,user_id,timestamp,amount,merchant,merchant_category,payment_method,device_fingerprint,ip_country,status
+T0001,U001,2023-09-20 10:15:00,25.99,Spotify,streaming,visa_credit,DEV_001,US,approved
+T0002,U001,2023-12-20 18:30:00,9.99,QuickStream Media,streaming,visa_credit,DEV_001,US,approved
+T0003,U001,2024-03-22 11:40:00,65.00,Amazon,retail,visa_credit,DEV_001,US,approved
+T0004,U002,2023-03-15 14:00:00,29.99,Netflix,streaming,visa_credit,DEV_002,US,approved
+T0005,U002,2023-06-22 11:30:00,45.00,Amazon,retail,visa_credit,DEV_002,US,approved
+T0006,U002,2023-09-18 16:45:00,32.50,Walmart,groceries,visa_credit,DEV_002,US,approved
+T0007,U002,2023-12-04 09:20:00,29.99,Netflix,streaming,visa_credit,DEV_002,US,approved
+T0008,U002,2024-02-12 13:15:00,52.00,Amazon,retail,visa_credit,DEV_002,US,approved
+T0009,U002,2024-04-19 22:48:00,4500.00,Newegg,electronics,visa_credit,DEV_NEW2,US,approved
+T0010,U003,2023-04-10 12:00:00,35.00,Tesco,groceries,visa_credit,DEV_003,UK,approved
+T0011,U003,2024-01-05 19:30:00,80.00,Amazon,retail,visa_credit,DEV_003,UK,approved
+T0012,U004,2023-05-18 14:25:00,45.00,Amazon,retail,visa_credit,DEV_004,CA,approved
+T0013,U004,2023-11-22 10:15:00,9.99,QuickStream Media,streaming,visa_credit,DEV_004,CA,approved
+T0014,U004,2024-03-30 16:50:00,55.00,Tim Hortons,groceries,visa_credit,DEV_004,CA,approved
+T0015,U005,2023-07-22 11:00:00,28.00,Spotify,streaming,visa_credit,DEV_005,US,approved
+T0016,U005,2024-02-15 14:30:00,72.00,BestBuy,electronics,visa_credit,DEV_005,US,approved
+T0017,U006,2023-08-15 09:30:00,40.00,Amazon,retail,visa_credit,DEV_006,DE,approved
+T0018,U006,2024-01-22 18:15:00,29.99,Netflix,streaming,visa_credit,DEV_006,DE,approved
+T0019,U006,2024-04-10 12:45:00,55.00,Lidl,groceries,visa_credit,DEV_006,DE,approved
+T0020,U007,2023-09-05 13:20:00,35.00,Amazon,retail,visa_credit,DEV_007,US,approved
+T0021,U007,2024-01-18 19:40:00,9.99,QuickStream Media,streaming,visa_credit,DEV_007,US,approved
+T0022,U007,2024-04-08 14:00:00,48.00,Walmart,groceries,visa_credit,DEV_007,US,approved
+T0023,U008,2023-09-10 10:00:00,42.00,Amazon,retail,visa_credit,DEV_008,FR,approved
+T0024,U008,2024-03-15 16:30:00,29.99,Netflix,streaming,visa_credit,DEV_008,FR,approved
+T0025,U009,2023-10-15 14:30:00,45.00,Amazon,retail,visa_credit,DEV_009,US,approved
+T0026,U009,2023-12-22 18:00:00,120.00,BestBuy,electronics,visa_credit,DEV_009,US,approved
+T0027,U009,2024-02-08 09:15:00,80.00,Walmart,groceries,visa_credit,DEV_009,US,approved
+T0028,U009,2024-04-10 03:22:00,850.00,GiftCardKing,gift_cards,visa_credit,DEV_NEW9,RU,approved
+T0029,U009,2024-04-12 04:48:00,1200.00,Newegg,electronics,visa_credit,DEV_NEW9,NG,approved
+T0030,U009,2024-04-13 02:15:00,980.00,GiftCardKing,gift_cards,visa_credit,DEV_NEW9,RU,approved
+T0031,U009,2024-04-14 03:55:00,50.00,Spotify,streaming,visa_credit,DEV_NEW9,RU,declined
+T0032,U010,2023-10-20 14:00:00,40.00,Amazon,retail,visa_credit,DEV_010,UK,approved
+T0033,U010,2024-02-10 19:30:00,9.99,QuickStream Media,streaming,visa_credit,DEV_010,UK,approved
+T0034,U010,2024-04-12 11:25:00,65.00,Tesco,groceries,visa_credit,DEV_010,UK,approved
+T0035,U011,2023-12-08 13:40:00,38.00,Amazon,retail,visa_credit,DEV_011,US,approved
+T0036,U011,2024-04-01 09:50:00,75.00,BestBuy,electronics,visa_credit,DEV_011,US,approved
+T0037,U012,2024-01-15 14:25:00,28.99,Spotify,streaming,visa_credit,DEV_012,US,approved
+T0038,U012,2024-04-05 18:10:00,52.00,Walmart,groceries,visa_credit,DEV_012,US,approved
+T0039,U013,2024-02-05 10:00:00,45.00,Amazon,retail,visa_credit,DEV_013,DE,approved
+T0040,U013,2024-04-15 16:30:00,29.99,Netflix,streaming,visa_credit,DEV_013,DE,approved
+T0041,U013,2024-04-22 12:00:00,68.00,Lidl,groceries,visa_credit,DEV_013,DE,approved
+T0042,U014,2024-02-20 11:30:00,40.00,Amazon,retail,visa_credit,DEV_014,US,approved
+T0043,U014,2024-03-15 19:30:00,9.99,QuickStream Media,streaming,visa_credit,DEV_014,US,approved
+T0044,U014,2024-04-10 14:00:00,55.00,Walmart,groceries,visa_credit,DEV_014,US,approved
+T0045,U014,2024-04-22 17:00:00,29.99,Spotify,streaming,visa_credit,DEV_014,US,approved
+T0046,U015,2024-03-12 14:30:00,52.00,Rakuten,retail,visa_credit,DEV_015,JP,approved
+T0047,U015,2024-04-18 16:00:00,35.00,Amazon,retail,visa_credit,DEV_015,JP,approved
+T0048,U016,2024-04-25 11:40:00,25.99,Spotify,streaming,visa_credit,DEV_016,US,approved
+T0049,U017,2024-04-22 14:05:00,9.99,Spotify,streaming,visa_credit,DEV_017,US,approved
+T0050,U017,2024-04-25 09:15:00,480.00,GiftCardKing,gift_cards,visa_credit,DEV_017,US,approved
+T0051,U017,2024-04-25 09:42:00,480.00,GiftCardKing,gift_cards,visa_credit,DEV_017,CA,approved
+T0052,U017,2024-04-25 10:08:00,920.00,Newegg,electronics,mastercard_credit,DEV_017,GB,approved
+T0053,U017,2024-04-25 10:23:00,480.00,GiftCardKing,gift_cards,visa_credit,DEV_017,US,approved
+T0054,U017,2024-04-25 10:41:00,1200.00,BestBuy,electronics,mastercard_credit,DEV_017,GB,approved
+T0055,U017,2024-04-25 10:55:00,480.00,GiftCardKing,gift_cards,visa_credit,DEV_017,CA,declined
+T0056,U017,2024-04-25 11:02:00,480.00,GiftCardKing,gift_cards,visa_credit,DEV_017,CA,declined
+T0057,U018,2024-04-15 14:00:00,42.00,Amazon,retail,visa_credit,DEV_018,US,approved
+T0058,U018,2024-04-18 11:30:00,9.99,QuickStream Media,streaming,visa_credit,DEV_018,US,approved
+T0059,U018,2024-04-22 19:10:00,65.00,Walmart,groceries,visa_credit,DEV_018,US,approved
+T0060,U019,2024-04-12 10:30:00,38.00,Amazon,retail,visa_credit,DEV_019,UK,approved
+T0061,U019,2024-04-20 16:45:00,42.00,Tesco,groceries,visa_credit,DEV_019,UK,approved
+T0062,U020,2024-04-10 13:15:00,29.99,Netflix,streaming,visa_credit,DEV_020,CA,approved
+T0063,U020,2024-04-21 18:00:00,55.00,Tim Hortons,groceries,visa_credit,DEV_020,CA,approved
+T0064,U021,2024-04-08 11:30:00,45.00,Amazon,retail,visa_credit,DEV_021,US,approved
+T0065,U021,2024-04-12 19:30:00,9.99,QuickStream Media,streaming,visa_credit,DEV_021,US,approved
+T0066,U021,2024-04-22 14:25:00,38.00,Walmart,groceries,visa_credit,DEV_021,US,approved
+T0067,U022,2024-04-05 12:00:00,35.00,Carrefour,groceries,visa_credit,DEV_022,FR,approved
+T0068,U022,2024-04-19 18:30:00,29.99,Netflix,streaming,visa_credit,DEV_022,FR,approved
+T0069,U023,2024-04-01 13:45:00,80.00,Amazon,retail,visa_credit,DEV_share1,US,approved
+T0070,U023,2024-04-08 16:20:00,250.00,BestBuy,electronics,visa_credit,DEV_share1,US,approved
+T0071,U023,2024-04-15 11:30:00,180.00,Walmart,groceries,visa_credit,DEV_share1,US,approved
+T0072,U023,2024-04-20 19:00:00,300.00,GiftCardKing,gift_cards,mastercard_credit,DEV_share1,US,approved
+T0073,U024,2024-04-02 10:30:00,90.00,Amazon,retail,visa_credit,DEV_share1,US,approved
+T0074,U024,2024-04-09 17:45:00,220.00,BestBuy,electronics,visa_credit,DEV_share1,US,approved
+T0075,U024,2024-04-16 14:15:00,200.00,GiftCardKing,gift_cards,mastercard_credit,DEV_share1,US,approved
+T0076,U024,2024-04-21 12:50:00,400.00,GiftCardKing,gift_cards,mastercard_credit,DEV_share1,US,approved
+T0077,U025,2024-04-19 11:00:00,32.00,Amazon,retail,visa_credit,DEV_025,US,approved
+T0078,U025,2024-04-23 16:30:00,25.99,Spotify,streaming,visa_credit,DEV_025,US,approved
