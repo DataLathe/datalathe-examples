@@ -170,9 +170,16 @@ public class AiAgentFraudExample {
                         .forEach(n -> System.out.println("[iter " + iter + "] " + n.getText()));
                 response.getToolCalls().stream()
                         .filter(t -> t.getIteration() == iter)
-                        .forEach(t -> System.out.println("[iter " + iter + "] tool: " + t.getTool()
-                                + " (" + t.getDurationMs() + "ms"
-                                + (t.isError() ? ", ERROR" : "") + ") -> " + t.getResultSummary()));
+                        .forEach(t -> {
+                            System.out.println("[iter " + iter + "] tool: " + t.getTool()
+                                    + " (" + t.getDurationMs() + "ms"
+                                    + (t.isError() ? ", ERROR" : "") + ") -> " + t.getResultSummary());
+                            // On error, also print the args (the SQL/payload that
+                            // failed) so failures are debuggable from the trace.
+                            if (t.isError() && t.getArgs() != null) {
+                                System.out.println("        args: " + t.getArgs().toString());
+                            }
+                        });
             }
 
             if (!response.getAttachments().isEmpty()) {
