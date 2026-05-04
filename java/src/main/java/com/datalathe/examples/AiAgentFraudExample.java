@@ -20,12 +20,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Example: an open-ended fraud audit. The agent has a payments dataset
- * (users, transactions, chargebacks) with several different anomaly
- * patterns deliberately seeded into the data. The user question is the
- * kind a human analyst would actually ask: "audit this for suspicious
- * activity" — no SQL, no specific entities, no hint about which patterns
- * to look for.
+ * Example: an open-ended fraud audit, then a follow-up that reuses the
+ * same session. The agent has a payments dataset (users, transactions,
+ * chargebacks) with several different anomaly patterns deliberately
+ * seeded into the data. The first question is the kind a human analyst
+ * would actually ask: "audit this for suspicious activity" — no SQL, no
+ * specific entities, no hint about which patterns to look for.
+ *
+ * The second turn reuses {@code session_id} from the first response so
+ * the agent sees the prior user/assistant turns as conversation history.
+ * That means "the suspects you just flagged" resolves on the server
+ * without the client re-stating them — demonstrating multi-turn use.
  *
  * Compared to {@link AiAgentExample} (which has a single concrete
  * analytical question), this one rewards multi-round exploration:
@@ -124,7 +129,7 @@ public class AiAgentFraudExample {
         logger.info("AI context: {}", context.getContextId());
 
         try {
-            AgentRequest request = AgentRequest.builder()
+            AgentRequest auditRequest = AgentRequest.builder()
                     .contextId(context.getContextId())
                     .credentialId(credential.getCredentialId())
                     .userQuestion(
@@ -145,59 +150,40 @@ public class AiAgentFraudExample {
                             .build())
                     .build();
 
-            System.out.println("\n=== Audit question ===");
-            System.out.println(request.getUserQuestion());
+            AgentResponse auditResponse = client.aiAgent(auditRequest);
+            printTurn("Audit", auditRequest, auditResponse);
 
-            AgentResponse response = client.aiAgent(request);
-
-            System.out.println("\n=== Final answer ===");
-            System.out.println(response.getAnswer() != null ? response.getAnswer() : "(no answer)");
-            if (response.getStopReason() != null) {
-                System.out.println("Stop reason: " + response.getStopReason());
-            }
-            if (response.getError() != null) {
-                System.out.println("Error: " + response.getError()
-                        + (response.getErrorCode() != null ? " [" + response.getErrorCode() + "]" : "")
-                        + " (request_id=" + response.getRequestId() + ")");
+            // Follow-up turn: reuse the session_id the engine returned. The
+            // agent sees the prior user/assistant turns as conversation
+            // history, so "the suspects you just flagged" resolves without
+            // re-stating them.
+            if (auditResponse.getSessionId() == null) {
+                System.out.println("\nNo session_id returned — skipping follow-up.");
+                return;
             }
 
-            System.out.println("\n=== Reasoning trace ===");
-            int iterations = response.getUsage() != null ? response.getUsage().getIterations() : 0;
-            for (int i = 1; i <= iterations; i++) {
-                final int iter = i;
-                response.getNarration().stream()
-                        .filter(n -> n.getIteration() == iter)
-                        .forEach(n -> System.out.println("[iter " + iter + "] " + n.getText()));
-                response.getToolCalls().stream()
-                        .filter(t -> t.getIteration() == iter)
-                        .forEach(t -> {
-                            System.out.println("[iter " + iter + "] tool: " + t.getTool()
-                                    + " (" + t.getDurationMs() + "ms"
-                                    + (t.isError() ? ", ERROR" : "") + ") -> " + t.getResultSummary());
-                            // On error, also print the args (the SQL/payload that
-                            // failed) so failures are debuggable from the trace.
-                            if (t.isError() && t.getArgs() != null) {
-                                System.out.println("        args: " + t.getArgs().toString());
-                            }
-                        });
-            }
+            AgentRequest followUpRequest = AgentRequest.builder()
+                    .contextId(context.getContextId())
+                    .credentialId(credential.getCredentialId())
+                    .sessionId(auditResponse.getSessionId())
+                    .userQuestion(
+                            "Of the suspects you just flagged, pick the single highest-priority "
+                                    + "one and build a case file: a chronological timeline of "
+                                    + "every transaction (timestamp, amount, status, ip_country, "
+                                    + "payment_method, device_fingerprint) plus any matching "
+                                    + "chargebacks. Attach the timeline as a table. Be explicit "
+                                    + "about why this user is the top priority over the others "
+                                    + "you flagged.")
+                    .agentOptions(AgentOptions.builder()
+                            .maxIterations(10)
+                            .maxToolCalls(20)
+                            .maxWallClockSecs(180L)
+                            .runSqlRowCap(1000)
+                            .build())
+                    .build();
 
-            if (!response.getAttachments().isEmpty()) {
-                System.out.println("\n=== Attachments ===");
-                for (AgentResponse.Attachment a : response.getAttachments()) {
-                    System.out.println("\n[" + a.getCaption() + "]");
-                    printTable(a.getData());
-                }
-            }
-
-            if (response.getUsage() != null) {
-                AgentResponse.AgentUsage u = response.getUsage();
-                System.out.println("\n=== Usage ===");
-                System.out.printf(
-                        "Iterations: %d  Tool calls: %d  Tokens: %d in / %d out  Model: %s%n",
-                        u.getIterations(), u.getToolCalls(),
-                        u.getInputTokens(), u.getOutputTokens(), u.getModel());
-            }
+            AgentResponse followUpResponse = client.aiAgent(followUpRequest);
+            printTurn("Follow-up", followUpRequest, followUpResponse);
         } finally {
             client.deleteAiContext(context.getContextId());
             client.deleteAiCredential(credential.getCredentialId());
@@ -205,6 +191,67 @@ public class AiAgentFraudExample {
             client.deleteChip(txnsChipId);
             client.deleteChip(cbChipId);
             logger.info("Cleaned up.");
+        }
+    }
+
+    private static void printTurn(String label, AgentRequest request, AgentResponse response) {
+        System.out.println("\n========== " + label + " ==========");
+        System.out.println("\n=== Question ===");
+        System.out.println(request.getUserQuestion());
+        if (request.getSessionId() != null) {
+            System.out.println("(session_id=" + request.getSessionId() + ")");
+        }
+
+        System.out.println("\n=== Final answer ===");
+        System.out.println(response.getAnswer() != null ? response.getAnswer() : "(no answer)");
+        if (response.getStopReason() != null) {
+            System.out.println("Stop reason: " + response.getStopReason());
+        }
+        if (response.getSessionId() != null) {
+            System.out.println("Session: " + response.getSessionId());
+        }
+        if (response.getError() != null) {
+            System.out.println("Error: " + response.getError()
+                    + (response.getErrorCode() != null ? " [" + response.getErrorCode() + "]" : "")
+                    + " (request_id=" + response.getRequestId() + ")");
+        }
+
+        System.out.println("\n=== Reasoning trace ===");
+        int iterations = response.getUsage() != null ? response.getUsage().getIterations() : 0;
+        for (int i = 1; i <= iterations; i++) {
+            final int iter = i;
+            response.getNarration().stream()
+                    .filter(n -> n.getIteration() == iter)
+                    .forEach(n -> System.out.println("[iter " + iter + "] " + n.getText()));
+            response.getToolCalls().stream()
+                    .filter(t -> t.getIteration() == iter)
+                    .forEach(t -> {
+                        System.out.println("[iter " + iter + "] tool: " + t.getTool()
+                                + " (" + t.getDurationMs() + "ms"
+                                + (t.isError() ? ", ERROR" : "") + ") -> " + t.getResultSummary());
+                        // On error, also print the args (the SQL/payload that
+                        // failed) so failures are debuggable from the trace.
+                        if (t.isError() && t.getArgs() != null) {
+                            System.out.println("        args: " + t.getArgs().toString());
+                        }
+                    });
+        }
+
+        if (!response.getAttachments().isEmpty()) {
+            System.out.println("\n=== Attachments ===");
+            for (AgentResponse.Attachment a : response.getAttachments()) {
+                System.out.println("\n[" + a.getCaption() + "]");
+                printTable(a.getData());
+            }
+        }
+
+        if (response.getUsage() != null) {
+            AgentResponse.AgentUsage u = response.getUsage();
+            System.out.println("\n=== Usage ===");
+            System.out.printf(
+                    "Iterations: %d  Tool calls: %d  Tokens: %d in / %d out  Model: %s%n",
+                    u.getIterations(), u.getToolCalls(),
+                    u.getInputTokens(), u.getOutputTokens(), u.getModel());
         }
     }
 
